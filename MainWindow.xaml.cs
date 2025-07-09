@@ -5,7 +5,7 @@ using System.Windows.Media;
 using System.Xml.Linq;
 using System.Xml.XPath;
 
-namespace XmlComparerWPF_NET6
+namespace XmlComparer
 {
     public partial class MainWindow : Window
     {
@@ -76,37 +76,72 @@ namespace XmlComparerWPF_NET6
             TreeRight.Items.Add(rightTree);
 
             CompareElements(leftNode, rightNode, leftTree, rightTree);
+            leftTree.IsExpanded = true;
+            rightTree.IsExpanded = true;
         }
 
         private void CompareElements(XElement left, XElement right, TreeViewItem leftNode, TreeViewItem rightNode)
         {
-            var leftChildren = left.Elements().ToList();
-            var rightChildren = right.Elements().ToList();
+            var leftChildren = left?.Elements().ToList() ?? new List<XElement>();
+            var rightChildren = right?.Elements().ToList() ?? new List<XElement>();
+
             int max = Math.Max(leftChildren.Count, rightChildren.Count);
+
+            for (int i = 0; i < max; i++)
+            {
+                if (rightChildren.Count > i && leftChildren[i].Name == rightChildren[i].Name)
+                    continue;
+
+                XElement xElement = new XElement("missing");
+                rightChildren.Insert(i, xElement);
+            }
 
             for (int i = 0; i < max; i++)
             {
                 XElement l = i < leftChildren.Count ? leftChildren[i] : null;
                 XElement r = i < rightChildren.Count ? rightChildren[i] : null;
 
-                string lh = l == null ? "<missing>" : l.Name.LocalName + ": " + l.Value;
-                string rh = r == null ? "<missing>" : r.Name.LocalName + ": " + r.Value;
+                string lh = l == null ? "<missing>" : $"{l.Name.LocalName}: {l.Value}";
+                string rh = r == null ? "<missing>" : $"{r.Name.LocalName}: {r.Value}";
 
                 var lItem = new TreeViewItem { Header = lh };
                 var rItem = new TreeViewItem { Header = rh };
 
-                if (l == null || r == null || l.Name != r.Name || l.Value != r.Value)
+                bool isDifferent = false;
+
+                if (l == null || r == null)
+                {
+                    isDifferent = true;
+                }
+                else if (l.Name != r.Name || l.Value.Trim() != r.Value.Trim())
+                {
+                    isDifferent = true;
+                }
+
+                if (isDifferent)
                 {
                     lItem.Background = Brushes.Orange;
                     rItem.Background = Brushes.Red;
+
+                    leftNode.Items.Add(lItem);
+                    rightNode.Items.Add(rItem);
+
                 }
 
-                leftNode.Items.Add(lItem);
-                rightNode.Items.Add(rItem);
 
-                if (l != null && r != null && l.HasElements && r.HasElements)
+                bool hasLeftChildren = l != null && l.HasElements;
+                bool hasRightChildren = r != null && r.HasElements;
+
+                if (hasLeftChildren || hasRightChildren)
+                {
                     CompareElements(l, r, lItem, rItem);
+                }
+
+                lItem.IsExpanded = true;
+                rItem.IsExpanded = true;
             }
         }
+
+
     }
 }
