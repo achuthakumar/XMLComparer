@@ -1,7 +1,7 @@
 <Window x:Class="XmlComparer.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="XML Comparer (Specific Node)" Height="650" Width="1000">
+        Title="XML Comparer" Height="650" Width="1000">
     <Window.Resources>
         <Style TargetType="{x:Type Control}" x:Key="baseStyle">
             <Setter Property="FontSize" Value="11" />
@@ -15,13 +15,14 @@
     <DockPanel>
         <StackPanel DockPanel.Dock="Top" Orientation="Vertical" Margin="10">
             <StackPanel Orientation="Horizontal">
-                <Button x:Name="BtnLoadLeft" Content="Upload Left XML" Width="150" Margin="5"/>
-                <Button x:Name="BtnLoadRight" Content="Upload Right XML" Width="150" Margin="5"/>
+                <Button x:Name="BtnLoadLeft" Content="Upload Shadow XML" Width="150" Margin="5"/>
+                <Button x:Name="BtnLoadRight" Content="Upload Mapil XML" Width="150" Margin="5"/>
                 <TextBox x:Name="TxtFiles" Width="600" Margin="5" IsReadOnly="True"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="5">
-                <TextBlock Text="Enter Node:" VerticalAlignment="Center" Margin="0,0,5,0"/>
-                <TextBox x:Name="TxtXPath" Width="400" Margin="5" Text="MDYSPM01"/>
+                <CheckBox x:Name="CanFilterByNode" Content="Filter By Node" VerticalAlignment="Center"  Margin="0,0,5,0"  Checked="CanFilterByNode_Checked" Unchecked="CanFilterByNode_Checked"/>
+                <TextBox x:Name="TxtXPath" Width="400" Margin="5" Text="MDYSPM01" IsEnabled="False"/>
+                <CheckBox x:Name="ShowDifferencesOnly" Content="Show Only Differences" VerticalAlignment="Center"  Margin="0,0,5,0" />
                 <Button x:Name="BtnCompare" Content="Compare Node" Width="150" Margin="5"/>
             </StackPanel>
         </StackPanel>
@@ -32,8 +33,23 @@
                         <ColumnDefinition Width='*'/>
                         <ColumnDefinition Width='*'/>
                     </Grid.ColumnDefinitions>
-                    <TreeView x:Name="TreeLeft" Grid.Column="0"/>
-                    <TreeView x:Name="TreeRight" Grid.Column="1"/>
+                    <Grid Grid.Column="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="9*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock x:Name="LeftTreeHeader" Grid.Row="0" HorizontalAlignment="Center">Shadow</TextBlock>
+                        <TreeView x:Name="TreeLeft" Grid.Row="1"/>
+                    </Grid>
+                    <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="9*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock x:Name="RightTreeHeader" Grid.Row="0" HorizontalAlignment="Center">Mapil</TextBlock>
+                        <TreeView x:Name="TreeRight" Grid.Row="1"/>
+                    </Grid>
+
                 </Grid>
             </TabItem>
         </TabControl>
