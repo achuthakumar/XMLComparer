@@ -3,14 +3,26 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="XML Comparer" Height="650" Width="1000">
     <Window.Resources>
-        <Style TargetType="{x:Type Control}" x:Key="baseStyle">
-            <Setter Property="FontSize" Value="11" />
+
+            <!-- Button Style -->
+            <Style TargetType="Button">
+                <Setter Property="Background" Value="#007ACC"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="Padding" Value="10,5"/>
+                <Setter Property="Margin" Value="5"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="BorderBrush" Value="Transparent"/>
+            </Style>
+
+            <!-- TextBox Style -->
+        <Style TargetType="TextBox">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="FontSize" Value="14"/>
         </Style>
-        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource baseStyle}"></Style>
-        <Style TargetType="{x:Type Label}" BasedOn="{StaticResource baseStyle}"></Style>
-        <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource baseStyle}"></Style>
-        <Style TargetType="{x:Type ListView}" BasedOn="{StaticResource baseStyle}"></Style>
-        <!-- ComboBox, RadioButton, CheckBox, etc... -->
+
+       
     </Window.Resources>
     <DockPanel>
         <StackPanel DockPanel.Dock="Top" Orientation="Vertical" Margin="10">
@@ -24,6 +36,7 @@
                 <TextBox x:Name="TxtXPath" Width="400" Margin="5" Text="MDYSPM01" IsEnabled="False"/>
                 <CheckBox x:Name="ShowDifferencesOnly" Content="Show Only Differences" VerticalAlignment="Center"  Margin="0,0,5,0" />
                 <Button x:Name="BtnCompare" Content="Compare Node" Width="150" Margin="5"/>
+                <Button Content="Export TreeView" Click="ExportToExcel_Click" Margin="10"/>
             </StackPanel>
         </StackPanel>
         <TabControl>

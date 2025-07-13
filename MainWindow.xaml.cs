@@ -1,3 +1,4 @@
+using ClosedXML.Excel;
 using Microsoft.Win32;
 using System.Windows;
 using System.Windows.Controls;
@@ -229,5 +230,57 @@ namespace XmlComparer
         {
             return ShowDifferencesOnly != null && ShowDifferencesOnly.IsChecked.HasValue && ShowDifferencesOnly.IsChecked.Value;
         }
+
+        private void ExportToExcel_Click(object sender, RoutedEventArgs e)
+        {
+            var leftPaths = new List<string>();
+            var rightPaths = new List<string>();
+
+            foreach (TreeViewItem item in TreeLeft.Items)
+                GetNodePaths(item, "", leftPaths);
+
+            foreach (TreeViewItem item in TreeRight.Items)
+                GetNodePaths(item, "", rightPaths);
+
+            int maxRows = leftPaths.Count > rightPaths.Count ? leftPaths.Count : rightPaths.Count;
+
+            var wb = new XLWorkbook();
+            var ws = wb.Worksheets.Add("Comparison");
+
+            ws.Cell(1, 1).Value = "Left Tree";
+            ws.Cell(1, 2).Value = "Right Tree";
+
+            for (int i = 0; i < maxRows; i++)
+            {
+                if (i < leftPaths.Count)
+                    ws.Cell(i + 2, 1).Value = leftPaths[i];
+                if (i < rightPaths.Count)
+                    ws.Cell(i + 2, 2).Value = rightPaths[i];
+            }
+
+            // Show SaveFileDialog
+            var dialog = new SaveFileDialog
+            {
+                FileName = "TreeComparison.xlsx",
+                DefaultExt = ".xlsx",
+                Filter = "Excel Workbook (*.xlsx)|*.xlsx"
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                wb.SaveAs(dialog.FileName);
+                MessageBox.Show($"Exported Tree Comparison to {dialog.FileName}");
+            }
+        }
+
+        private void GetNodePaths(TreeViewItem item, string path, List<string> paths)
+        {
+            string currentPath = string.IsNullOrEmpty(path) ? item.Header.ToString() : $"{path}/{item.Header}";
+            paths.Add(currentPath);
+
+            foreach (TreeViewItem child in item.Items)
+                GetNodePaths(child, currentPath, paths);
+        }
+
     }
 }
